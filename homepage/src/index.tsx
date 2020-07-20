@@ -5,17 +5,15 @@ import * as ReactDOM from 'react-dom';
 const App = () => {
   return (
     <main>
-      <h1>react-typescript-library-template</h1>
+      <h1>ingredient-merge</h1>
       <section>
         <p>
-          This is a template repo to streamline the creation of Typescript
-          libraries.
+          Merges multiple raw ingredient strings into groups of parsed
+          ingredient data, based on which ingredients call for the same food and
+          have compatible units.
         </p>
         <p>
-          Use the template repository to start your own library:{' '}
-          <a href="https://github.com/a-type/typescript-library-template">
-            Github
-          </a>
+          <a href="https://github.com/a-type/ingredient-merge">Github</a>
         </p>
       </section>
     </main>
