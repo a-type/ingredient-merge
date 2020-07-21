@@ -39,7 +39,7 @@ describe('parseIngredients', () => {
       },
       quantity: {
         raw: '1/3',
-        normalized: 0.333333333333333,
+        normalized: 1 / 3.0,
         range: [0, 3],
       },
       comments: [],
@@ -348,6 +348,31 @@ describe('parseIngredients', () => {
         raw: '1/2',
         normalized: 0.5,
         range: [0, 3],
+      },
+    });
+  });
+
+  // this case needs improvement!!!
+  test('half of a can of beans', () => {
+    expect(parse('half of a can of beans')).toEqual({
+      original: 'half of a can of beans',
+      sanitized: 'half of a can of beans',
+      preparations: [],
+      comments: [],
+      food: {
+        raw: 'half of a can of beans',
+        normalized: 'half of a can of bean',
+        range: [0, 22],
+      },
+      unit: {
+        raw: null,
+        normalized: null,
+        range: [],
+      },
+      quantity: {
+        raw: null,
+        normalized: null,
+        range: [],
       },
     });
   });

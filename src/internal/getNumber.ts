@@ -1,11 +1,15 @@
-import Recognizer, { Culture } from '@microsoft/recognizers-text-number';
+import parseFraction from 'parse-fraction';
 
 export function getNumber(numberText: string): number | null {
-  const recognized = Recognizer.recognizeNumber(numberText, Culture.English);
+  try {
+    const recognized = parseFraction(numberText);
 
-  if (!recognized.length) {
+    if (!recognized || !recognized.length) {
+      return null;
+    }
+
+    return recognized[0] / recognized[1];
+  } catch (err) {
     return null;
   }
-
-  return parseFloat(recognized[0].resolution.value);
 }

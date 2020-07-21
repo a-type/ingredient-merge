@@ -35,7 +35,7 @@ const parsedResults = {
     },
     quantity: {
       raw: '1/3',
-      normalized: 0.333333333333333,
+      normalized: 1 / 3.0,
       range: [0, 3] as [number, number],
     },
     comments: [],
@@ -169,7 +169,7 @@ describe('mergeIngredients', () => {
       },
       {
         quantity: {
-          value: 0.333333333333333,
+          value: 1 / 3.0,
           unit: 'tablespoon',
         },
         food: 'onion',
@@ -206,7 +206,7 @@ describe('mergeIngredients', () => {
       },
       {
         quantity: {
-          value: 0.333333333333333 / 16.0 + 2,
+          value: 1 / 3.0 / 16.0 + 2,
           unit: 'cup',
         },
         food: 'onion',
@@ -253,7 +253,7 @@ describe('mergeIngredients', () => {
       },
       {
         quantity: {
-          value: 0.333333333333333,
+          value: 1 / 3.0,
           unit: 'tablespoon',
         },
         food: 'onion',
@@ -383,7 +383,7 @@ describe('mergeIngredients', () => {
     ).toEqual([
       {
         quantity: {
-          value: 0.333333333333333 / 16.0 + 2,
+          value: 1 / 3.0 / 16.0 + 2,
           unit: 'cup',
         },
         food: 'onion',
