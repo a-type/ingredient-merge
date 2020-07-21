@@ -29,6 +29,9 @@ export type MergedGroup = {
  * units cannot be converted to add together without knowing the density of
  * Parmesan cheese.
  *
+ * @param rawIngredients - ingredient strings to merge
+ * @param existingGroups - (optional) a previous merged list to add to
+ *
  * @example
  * ```
  * const merged = mergeIngredients([
@@ -38,7 +41,10 @@ export type MergedGroup = {
  * ]);
  * ```
  */
-export function mergeIngredients(rawIngredients: string[]) {
+export function mergeIngredients(
+  rawIngredients: string[],
+  existingGroups: MergedGroup[] = []
+) {
   const parsedIngredients = rawIngredients.map(parseIngredient);
   const byFood = parsedIngredients.reduce(function (map, ingredient) {
     const existing = map.get(ingredient.food.normalized) ?? [];
@@ -47,7 +53,7 @@ export function mergeIngredients(rawIngredients: string[]) {
     return map;
   }, new Map<string | null, ParseResult[]>());
 
-  let finalMerged: MergedGroup[] = [];
+  let finalMerged: MergedGroup[] = [...existingGroups];
   byFood.forEach(function (ingredientList, food) {
     // edge case - don't try to merge ingredients if no food was detected!
     if (!food) {
@@ -66,32 +72,31 @@ export function mergeIngredients(rawIngredients: string[]) {
     } else {
       // merge multiple ingredients - or not
       /** @warning - mutation below! */
-      const mergedList = ingredientList.reduce<MergedGroup[]>(function (
-        merged,
-        ingredient
-      ) {
+      ingredientList.forEach(function (ingredient) {
         // iterate over existing merged items - if there are multiple items in the
         // merged list, that means they are mutually incompatible units, but the
         // current item might be compatible with any of them
-        for (const mergedItem of merged) {
-          try {
-            const added = addQuantities(mergedItem.quantity, {
-              value: ingredient.quantity.normalized || 1,
-              unit: ingredient.unit.normalized,
-            });
-            mergedItem.quantity = added;
-            mergedItem.items.push(ingredient);
+        for (const mergedItem of finalMerged) {
+          if (mergedItem.food === ingredient.food.normalized) {
+            try {
+              const added = addQuantities(mergedItem.quantity, {
+                value: ingredient.quantity.normalized || 1,
+                unit: ingredient.unit.normalized,
+              });
+              mergedItem.quantity = added;
+              mergedItem.items.push(ingredient);
 
-            /** @warning - existing loop prematurely! */
-            return merged;
-          } catch (err) {
-            // looks like the units weren't compatible
+              /** @warning - existing loop prematurely! */
+              return;
+            } catch (err) {
+              // looks like the units weren't compatible
+            }
           }
         }
 
         // if we made it through every existing item in the group without
         // finding a compatible match, just add it on the end.
-        merged.push({
+        finalMerged.push({
           quantity: {
             value: ingredient.quantity.normalized || 1,
             unit: ingredient.unit.normalized,
@@ -99,14 +104,7 @@ export function mergeIngredients(rawIngredients: string[]) {
           food,
           items: [ingredient],
         });
-
-        return merged;
-      },
-      []);
-
-      // however many groups we created (incompatible units will branch into
-      // separate groups), add them to the main list
-      finalMerged = finalMerged.concat(mergedList);
+      });
     }
   });
 

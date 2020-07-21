@@ -7,17 +7,17 @@ const parsedResults = {
     food: {
       raw: 'oats',
       normalized: 'oat',
-      range: [9, 13],
+      range: [9, 13] as [number, number],
     },
     unit: {
       raw: 'cup',
       normalized: 'cup',
-      range: [2, 5],
+      range: [2, 5] as [number, number],
     },
     quantity: {
       raw: '1',
       normalized: 1,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     comments: [],
     preparations: [],
@@ -26,17 +26,17 @@ const parsedResults = {
     food: {
       raw: 'onion',
       normalized: 'onion',
-      range: [23, 28],
+      range: [23, 28] as [number, number],
     },
     unit: {
       raw: 'tablespoon',
       normalized: 'tablespoon',
-      range: [4, 14],
+      range: [4, 14] as [number, number],
     },
     quantity: {
       raw: '1/3',
       normalized: 0.333333333333333,
-      range: [0, 3],
+      range: [0, 3] as [number, number],
     },
     comments: [],
     preparations: ['chopped'],
@@ -47,17 +47,17 @@ const parsedResults = {
     quantity: {
       raw: '1',
       normalized: 1,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     unit: {
       raw: null,
       normalized: null,
-      range: [],
+      range: [] as const,
     },
     food: {
       raw: 'egg',
       normalized: 'egg',
-      range: [2, 5],
+      range: [2, 5] as [number, number],
     },
     comments: [],
     preparations: [],
@@ -68,17 +68,17 @@ const parsedResults = {
     quantity: {
       raw: '2',
       normalized: 2,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     unit: {
       raw: null,
       normalized: null,
-      range: [],
+      range: [] as const,
     },
     food: {
       raw: 'eggs',
       normalized: 'egg',
-      range: [2, 6],
+      range: [2, 6] as [number, number],
     },
     comments: [],
     preparations: [],
@@ -89,17 +89,17 @@ const parsedResults = {
     food: {
       raw: 'onions',
       normalized: 'onion',
-      range: [2, 8],
+      range: [2, 8] as [number, number],
     },
     unit: {
       raw: null,
       normalized: null,
-      range: [],
+      range: [] as const,
     },
     quantity: {
       raw: '3',
       normalized: 3,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     comments: [],
     preparations: [],
@@ -110,17 +110,17 @@ const parsedResults = {
     food: {
       raw: 'onions',
       normalized: 'onion',
-      range: [11, 17],
+      range: [11, 17] as [number, number],
     },
     unit: {
       raw: 'c',
       normalized: 'cup',
-      range: [1, 2],
+      range: [1, 2] as [number, number],
     },
     quantity: {
       raw: '2',
       normalized: 2,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     comments: [],
     preparations: ['chopped'],
@@ -133,17 +133,17 @@ const parsedResults = {
     food: {
       raw: 'oats',
       normalized: 'oat',
-      range: [9, 13],
+      range: [9, 13] as [number, number],
     },
     unit: {
       raw: 'can',
       normalized: 'can',
-      range: [2, 5],
+      range: [2, 5] as [number, number],
     },
     quantity: {
       raw: '1',
       normalized: 1,
-      range: [0, 1],
+      range: [0, 1] as [number, number],
     },
     comments: [],
     preparations: [],
@@ -361,6 +361,52 @@ describe('mergeIngredients', () => {
             },
           },
         ],
+      },
+    ]);
+  });
+
+  test('merges an existing list with new foods', () => {
+    expect(
+      mergeIngredients(
+        ['1 cup of oats', '1/3 tablespoon chopped onion', '2 eggs', '1 egg'],
+        [
+          {
+            quantity: {
+              value: 2,
+              unit: 'cup',
+            },
+            food: 'onion',
+            items: [parsedResults['2c chopped onions']],
+          },
+        ]
+      )
+    ).toEqual([
+      {
+        quantity: {
+          value: 0.333333333333333 / 16.0 + 2,
+          unit: 'cup',
+        },
+        food: 'onion',
+        items: [
+          parsedResults['2c chopped onions'],
+          parsedResults['1/3 tablespoon chopped onion'],
+        ],
+      },
+      {
+        quantity: {
+          value: 1,
+          unit: 'cup',
+        },
+        food: 'oat',
+        items: [parsedResults['1 cup of oats']],
+      },
+      {
+        quantity: {
+          value: 3,
+          unit: null,
+        },
+        food: 'egg',
+        items: [parsedResults['2 eggs'], parsedResults['1 egg']],
       },
     ]);
   });

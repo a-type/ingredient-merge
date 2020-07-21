@@ -61,10 +61,19 @@ export function addQuantities(qty1: Quantity, qty2: Quantity): Quantity {
   if (qty1.value === 0) return qty2;
 
   const convertedQuantity = convertQuantity(qty1, qty2.unit);
-  return {
-    value: convertedQuantity.value + qty2.value,
-    unit: convertedQuantity.unit,
-  };
+  const reversedConvertedQuantity = convertQuantity(qty2, qty1.unit);
+
+  if (convertedQuantity.value < reversedConvertedQuantity.value) {
+    return {
+      value: convertedQuantity.value + qty2.value,
+      unit: convertedQuantity.unit,
+    };
+  } else {
+    return {
+      value: reversedConvertedQuantity.value + qty1.value,
+      unit: reversedConvertedQuantity.unit,
+    };
+  }
 }
 
 export function subtractQuantities(qty1: Quantity, qty2: Quantity) {
