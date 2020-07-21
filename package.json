@@ -46,6 +46,7 @@
     "@types/jest": "^26.0.5",
     "@types/node": "^14.0.23",
     "@types/pluralize": "0.0.29",
+    "@types/shortid": "0.0.29",
     "babel-loader": "^8.1.0",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
@@ -57,6 +58,7 @@
     "convert-units": "^2.3.4",
     "ingredients-parser": "^1.4.0",
     "parse-fraction": "^1.2.1",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "shortid": "^2.2.15"
   }
 }

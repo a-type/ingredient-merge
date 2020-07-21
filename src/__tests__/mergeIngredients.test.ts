@@ -160,6 +160,7 @@ describe('mergeIngredients', () => {
       ])
     ).toEqual([
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: 'cup',
@@ -168,6 +169,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1 cup of oats']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1 / 3.0,
           unit: 'tablespoon',
@@ -176,6 +178,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1/3 tablespoon chopped onion']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: null,
@@ -197,6 +200,7 @@ describe('mergeIngredients', () => {
       ])
     ).toEqual([
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: 'cup',
@@ -205,6 +209,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1 cup of oats']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1 / 3.0 / 16.0 + 2,
           unit: 'cup',
@@ -216,6 +221,7 @@ describe('mergeIngredients', () => {
         ],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 3,
           unit: null,
@@ -236,6 +242,7 @@ describe('mergeIngredients', () => {
       ])
     ).toEqual([
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: 'cup',
@@ -244,6 +251,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1 cup of oats']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: 'can',
@@ -252,6 +260,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1 can of oats']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1 / 3.0,
           unit: 'tablespoon',
@@ -260,6 +269,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1/3 tablespoon chopped onion']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 3,
           unit: null,
@@ -273,6 +283,7 @@ describe('mergeIngredients', () => {
   test("doesn't merge null foods", () => {
     expect(mergeIngredients(['2', '8', '4'])).toEqual([
       {
+        id: expect.any(String),
         quantity: {
           value: 2,
           unit: null,
@@ -303,6 +314,7 @@ describe('mergeIngredients', () => {
         ],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 8,
           unit: null,
@@ -333,6 +345,7 @@ describe('mergeIngredients', () => {
         ],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 4,
           unit: null,
@@ -365,12 +378,107 @@ describe('mergeIngredients', () => {
     ]);
   });
 
-  test('merges an existing list with new foods', () => {
+  test('merges an existing list with new foods - simple', () => {
+    expect(
+      mergeIngredients(
+        ['1 cup of beans'],
+        [
+          {
+            id: 'anything',
+            quantity: {
+              value: 2,
+              unit: 'cup',
+            },
+            food: 'bean',
+            items: [
+              {
+                original: '2 cups of beans',
+                sanitized: '2 cups of beans',
+                comments: [],
+                preparations: [],
+                food: {
+                  raw: 'beans',
+                  normalized: 'bean',
+                  range: [10, 15],
+                },
+                unit: {
+                  raw: 'cups',
+                  normalized: 'cup',
+                  range: [2, 5],
+                },
+                quantity: {
+                  raw: '2',
+                  normalized: 2,
+                  range: [0, 1],
+                },
+              },
+            ],
+          },
+        ]
+      )
+    ).toEqual([
+      {
+        id: expect.any(String),
+        quantity: {
+          value: 3,
+          unit: 'cup',
+        },
+        food: 'bean',
+        items: [
+          {
+            original: '2 cups of beans',
+            sanitized: '2 cups of beans',
+            comments: [],
+            preparations: [],
+            food: {
+              raw: 'beans',
+              normalized: 'bean',
+              range: [10, 15],
+            },
+            unit: {
+              raw: 'cups',
+              normalized: 'cup',
+              range: [2, 5],
+            },
+            quantity: {
+              raw: '2',
+              normalized: 2,
+              range: [0, 1],
+            },
+          },
+          {
+            original: '1 cup of beans',
+            sanitized: '1 cup of beans',
+            comments: [],
+            preparations: [],
+            food: {
+              raw: 'beans',
+              normalized: 'bean',
+              range: [9, 14],
+            },
+            unit: {
+              raw: 'cup',
+              normalized: 'cup',
+              range: [2, 5],
+            },
+            quantity: {
+              raw: '1',
+              normalized: 1,
+              range: [0, 1],
+            },
+          },
+        ],
+      },
+    ]);
+  });
+
+  test('merges an existing list with new foods - complex', () => {
     expect(
       mergeIngredients(
         ['1 cup of oats', '1/3 tablespoon chopped onion', '2 eggs', '1 egg'],
         [
           {
+            id: 'anything',
             quantity: {
               value: 2,
               unit: 'cup',
@@ -382,6 +490,7 @@ describe('mergeIngredients', () => {
       )
     ).toEqual([
       {
+        id: expect.any(String),
         quantity: {
           value: 1 / 3.0 / 16.0 + 2,
           unit: 'cup',
@@ -393,6 +502,7 @@ describe('mergeIngredients', () => {
         ],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 1,
           unit: 'cup',
@@ -401,6 +511,7 @@ describe('mergeIngredients', () => {
         items: [parsedResults['1 cup of oats']],
       },
       {
+        id: expect.any(String),
         quantity: {
           value: 3,
           unit: null,

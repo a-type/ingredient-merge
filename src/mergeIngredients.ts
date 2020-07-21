@@ -1,7 +1,15 @@
 import { parseIngredient, ParseResult } from './parseIngredient';
 import { addQuantities, Quantity } from './internal/quantities';
+import shortid from 'shortid';
 
 export type MergedGroup = {
+  /**
+   * A randomly generated ID to identify a group. If you need each group
+   * to have a stable and unique ID, this is it - even if the library
+   * fails to properly merge foods, at least the groups will have different
+   * IDs.
+   */
+  id: string;
   /**
    * The total quantity of the ingredients in this group, based on a common
    * compatible unit
@@ -60,6 +68,7 @@ export function mergeIngredients(
       finalMerged = finalMerged.concat(
         ingredientList.map(function (ingredient) {
           return {
+            id: shortid(),
             quantity: {
               value: ingredient.quantity.normalized || 1,
               unit: ingredient.unit.normalized,
@@ -97,6 +106,7 @@ export function mergeIngredients(
         // if we made it through every existing item in the group without
         // finding a compatible match, just add it on the end.
         finalMerged.push({
+          id: shortid(),
           quantity: {
             value: ingredient.quantity.normalized || 1,
             unit: ingredient.unit.normalized,
