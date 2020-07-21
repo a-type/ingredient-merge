@@ -1,10 +1,7 @@
-import Recognizer from '@microsoft/recognizers-text-number';
+import Recognizer, { Culture } from '@microsoft/recognizers-text-number';
 
 export function getNumber(numberText: string): number | null {
-  const recognized = Recognizer.recognizeNumber(
-    numberText,
-    Recognizer.Culture.English
-  );
+  const recognized = Recognizer.recognizeNumber(numberText, Culture.English);
 
   if (!recognized.length) {
     return null;
