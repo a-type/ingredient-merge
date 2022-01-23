@@ -1,4 +1,6 @@
-import convert from 'convert-units';
+import configureMeasurements, { length, mass, pieces, volume } from 'convert-units';
+
+const convert = configureMeasurements({ volume, mass, pieces, length } as any);
 
 import { Quantity } from '../types';
 
