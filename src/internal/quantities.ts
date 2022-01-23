@@ -1,11 +1,8 @@
 import convert from 'convert-units';
 
-type Unit = Parameters<ReturnType<typeof convert>['from']>[0];
+import { Quantity } from '../types';
 
-export type Quantity = {
-  value: number;
-  unit: string | null;
-};
+type Unit = Parameters<ReturnType<typeof convert>['from']>[0];
 
 export function lookupUnit(unitName: string | null): Unit | null {
   if (!unitName) return null;

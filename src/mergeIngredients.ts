@@ -1,31 +1,8 @@
 import shortid from 'shortid';
 
-import { addQuantities, Quantity } from './internal/quantities';
-import { parseIngredient, ParseResult } from './parseIngredient';
-
-export type MergedGroup = {
-  /**
-   * A randomly generated ID to identify a group. If you need each group
-   * to have a stable and unique ID, this is it - even if the library
-   * fails to properly merge foods, at least the groups will have different
-   * IDs.
-   */
-  id: string;
-  /**
-   * The total quantity of the ingredients in this group, based on a common
-   * compatible unit
-   */
-  quantity: Quantity;
-  /**
-   * The normalized food name. In some cases, this can be null - that means
-   * no food was detected for this ingredient.
-   */
-  food: string | null;
-  /**
-   * The individual ingredients which contributed to this group
-   */
-  items: ParseResult[];
-};
+import { parseIngredient } from './parseIngredient';
+import { tryToCombine } from './tryToCombine';
+import { MergedGroup, ParseResult } from './types';
 
 /**
  * Merges multiple ingredients into groups of parsed ingredient
@@ -90,18 +67,12 @@ export function mergeIngredients(
         // current item might be compatible with any of them
         for (const mergedItem of finalMerged) {
           if (mergedItem.food === ingredient.food.normalized) {
-            try {
-              const added = addQuantities(mergedItem.quantity, {
-                value: ingredient.quantity.normalized || 1,
-                unit: ingredient.unit.normalized,
-              });
+            const added = tryToCombine(mergedItem, ingredient);
+            if (added) {
               mergedItem.quantity = added;
               mergedItem.items.push(ingredient);
-
-              /** @warning - existing loop prematurely! */
+              /** @warning - exiting loop prematurely! */
               return;
-            } catch (err) {
-              // looks like the units weren't compatible
             }
           }
         }
