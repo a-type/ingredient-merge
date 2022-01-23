@@ -1,6 +1,7 @@
-import { parseIngredient, ParseResult } from './parseIngredient';
-import { addQuantities, Quantity } from './internal/quantities';
 import shortid from 'shortid';
+
+import { addQuantities, Quantity } from './internal/quantities';
+import { parseIngredient, ParseResult } from './parseIngredient';
 
 export type MergedGroup = {
   /**
@@ -27,7 +28,7 @@ export type MergedGroup = {
 };
 
 /**
- * Merges multiple raw ingredient strings into groups of parsed ingredient
+ * Merges multiple ingredients into groups of parsed ingredient
  * data, based on which ingredients call for the same food and have compatible
  * units. For example, if two ingredients called for Parmesan cheese with one
  * asking for 1 tbsp and another 1 cup, the result would have one item for Parmesan
@@ -37,7 +38,7 @@ export type MergedGroup = {
  * units cannot be converted to add together without knowing the density of
  * Parmesan cheese.
  *
- * @param rawIngredients - ingredient strings to merge
+ * @param ingredients - ingredient strings to merge. these can be raw strings or results of parseIngredient
  * @param existingGroups - (optional) a previous merged list to add to
  *
  * @example
@@ -50,10 +51,12 @@ export type MergedGroup = {
  * ```
  */
 export function mergeIngredients(
-  rawIngredients: string[],
+  ingredients: (string | ParseResult)[],
   existingGroups: MergedGroup[] = []
 ) {
-  const parsedIngredients = rawIngredients.map(parseIngredient);
+  const parsedIngredients = ingredients.map((ing) =>
+    typeof ing === 'string' ? parseIngredient(ing) : ing
+  );
   const byFood = parsedIngredients.reduce(function (map, ingredient) {
     const existing = map.get(ingredient.food.normalized) ?? [];
     existing.push(ingredient);

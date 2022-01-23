@@ -53,7 +53,7 @@ mergeIngredients([
     },
     {
       quantity: {
-        value: 0.333333333333333 / 16.0 + 2,
+        value: 2.0208333333, <-- that's 1/3 tbsp + 2 cups, in cups
         unit: 'cup',
       },
       items: [
@@ -164,3 +164,44 @@ If you just want to show the final computed values, though, you can reference th
 Finally, you'll notice this library attempts to be very fault-tolerant. Almost any value in the returned output could be `null`, meaning that it can't find a suitable value for that field. That probably means the parsing of the ingredient itself was not very successful. I'm using heuristics for sanitization before relying on the `ingredients-parser` npm module to identify food, quantity, and unit - then passing the quantity to a Microsoft-made number recognizer. Hopefully the code is fairly simple to read. If you notice that a well-formed ingredient is not parsing correctly, I encourage you to issue a PR with a proposed improvement to the parsing logic!
 
 In the meantime, if you notice key values are `null`, you should be prepared to fall back to showing the original ingredient. It's better to at least show the user what they entered without merging than it is to lose the item entirely or spit out `null`!
+
+## Advanced usage
+
+This library exposes the parsing function it uses to convert raw ingredient strings into a list of parsed ingredient data. You can use this to parse individual ingredient strings in a consistent way which is usable by the library for merging later.
+
+```ts
+import { parseIngredient } from 'ingredient-merge';
+
+const parsed = parseIngredient('1 cup of oats');
+
+// returns:
+/*
+{
+  original: '1 cup of oats',
+  sanitized: '1 cup of oats',
+  food: {
+    raw: 'oats',
+    normalized: 'oat',
+    range: [9, 13],
+  },
+  unit: {
+    raw: 'cup',
+    normalized: 'cup',
+    range: [2, 5],
+  },
+  quantity: {
+    raw: '1',
+    normalized: 1,
+    range: [0, 1],
+  },
+  comments: [],
+  preparations: [],
+}
+*/
+```
+
+You can pass parsed ingredient data to the `ingredients` parameter of `mergeIngredients` instead of raw strings.
+
+```ts
+mergeIngredients([parsed], otherIngredientGroups);
+```

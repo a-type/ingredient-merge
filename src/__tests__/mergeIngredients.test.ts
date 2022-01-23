@@ -1,6 +1,7 @@
+import { ParseResult } from '..';
 import { mergeIngredients } from '../mergeIngredients';
 
-const parsedResults = {
+const parsedResults: Record<string, ParseResult> = {
   '1 cup of oats': {
     original: '1 cup of oats',
     sanitized: '1 cup of oats',
@@ -52,7 +53,7 @@ const parsedResults = {
     unit: {
       raw: null,
       normalized: null,
-      range: [] as const,
+      range: [],
     },
     food: {
       raw: 'egg',
@@ -73,7 +74,7 @@ const parsedResults = {
     unit: {
       raw: null,
       normalized: null,
-      range: [] as const,
+      range: [],
     },
     food: {
       raw: 'eggs',
@@ -94,7 +95,7 @@ const parsedResults = {
     unit: {
       raw: null,
       normalized: null,
-      range: [] as const,
+      range: [],
     },
     quantity: {
       raw: '3',
@@ -518,6 +519,94 @@ describe('mergeIngredients', () => {
         },
         food: 'egg',
         items: [parsedResults['2 eggs'], parsedResults['1 egg']],
+      },
+    ]);
+  });
+
+  test('merges parsed ingredients into an existing list', () => {
+    expect(
+      mergeIngredients(
+        [
+          parsedResults['1 cup of oats'],
+          parsedResults['1 egg'],
+          parsedResults['1 can of oats'],
+        ],
+        [
+          {
+            id: 'one',
+            quantity: {
+              value: 1 / 3.0 / 16.0 + 2,
+              unit: 'cup',
+            },
+            food: 'onion',
+            items: [
+              parsedResults['2c chopped onions'],
+              parsedResults['1/3 tablespoon chopped onion'],
+            ],
+          },
+          {
+            id: 'two',
+            quantity: {
+              value: 1,
+              unit: 'cup',
+            },
+            food: 'oat',
+            items: [parsedResults['1 cup of oats']],
+          },
+          {
+            id: 'three',
+            quantity: {
+              value: 3,
+              unit: null,
+            },
+            food: 'egg',
+            items: [parsedResults['2 eggs'], parsedResults['1 egg']],
+          },
+        ]
+      )
+    ).toEqual([
+      {
+        id: expect.any(String),
+        quantity: {
+          value: 1 / 3.0 / 16.0 + 2,
+          unit: 'cup',
+        },
+        food: 'onion',
+        items: [
+          parsedResults['2c chopped onions'],
+          parsedResults['1/3 tablespoon chopped onion'],
+        ],
+      },
+      {
+        id: expect.any(String),
+        quantity: {
+          value: 2,
+          unit: 'cup',
+        },
+        food: 'oat',
+        items: [parsedResults['1 cup of oats'], parsedResults['1 cup of oats']],
+      },
+      {
+        id: expect.any(String),
+        quantity: {
+          value: 4,
+          unit: null,
+        },
+        food: 'egg',
+        items: [
+          parsedResults['2 eggs'],
+          parsedResults['1 egg'],
+          parsedResults['1 egg'],
+        ],
+      },
+      {
+        id: expect.any(String),
+        quantity: {
+          value: 1,
+          unit: 'can',
+        },
+        food: 'oat',
+        items: [parsedResults['1 can of oats']],
       },
     ]);
   });
